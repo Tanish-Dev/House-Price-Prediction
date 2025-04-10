@@ -1,52 +1,76 @@
-# Pune House Price Predictor
+# House Price Prediction - Pune
 
-A machine learning web application that predicts house prices in Pune based on various features like location, size, and amenities.
+A machine learning web application that predicts house prices in Pune based on property features.
 
 ## Features
 
-- Predicts property prices in Pune using a trained machine learning model
-- User-friendly web interface for input and visualization
-- Support for different area types and locations across Pune
-- RESTful API for integrating predictions into other applications
-- Mobile-responsive design
+- Accurate price prediction based on property size, bedrooms, bathrooms, and location
+- Modern responsive user interface
+- API endpoint for programmatic access
 
-## Tech Stack
+## Deployment Guide
 
-- **Frontend**: HTML, CSS, JavaScript
-- **Backend**: Flask (Python)
-- **Machine Learning**: Scikit-learn
-- **Data Processing**: Pandas, NumPy
-- **Deployment**: Gunicorn
+### Option 1: Deploy to Render (Recommended)
 
-## Installation
+1. Sign up for a free [Render account](https://render.com)
+2. Connect your GitHub/GitLab account or manually deploy the code
+3. Create a new Web Service
+4. Select "Build and deploy from a Git repository"
+5. Configure your deployment:
+   - Build Command: `pip install -r requirements.txt`
+   - Start Command: `gunicorn main:app`
+6. Click "Create Web Service"
 
-1. Clone the repository:
+### Option 2: Deploy to PythonAnywhere
 
-   ```
-   git clone https://github.com/yourusername/pune-house-price-predictor.git
-   cd pune-house-price-predictor
-   ```
+1. Sign up for a free [PythonAnywhere account](https://www.pythonanywhere.com/)
+2. Upload your code using their file uploader or via GitHub
+3. Create a new web app, selecting Flask and Python 3.10
+4. Set up your virtual environment and install requirements
+5. Configure WSGI file to point to your Flask app
 
-2. Create and activate a virtual environment:
+### Option 3: Deploy to Heroku
 
-   ```
-   python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   ```
+1. Sign up for a [Heroku account](https://heroku.com)
+2. Install the Heroku CLI: `brew install heroku/brew/heroku`
+3. Login to Heroku: `heroku login`
+4. Create a new app: `heroku create your-app-name`
+5. Deploy your code: `git push heroku main`
 
-3. Install dependencies:
+## Local Development
 
-   ```
-   pip install -r requirements.txt
-   ```
+```bash
+# Install dependencies
+pip install -r requirements.txt
 
-4. Run the application:
+# Run the application
+python main.py
+```
 
-   ```
-   python main.py
-   ```
+Visit `http://localhost:5000` in your browser.
 
-5. Open your browser and navigate to `http://127.0.0.1:5000`
+## API Usage
+
+Send a POST request to `/api/predict` with JSON data:
+
+```json
+{
+  "total_sqft": 1200,
+  "bath": 2,
+  "balcony": 1,
+  "bhk": 2,
+  "area_type": "Built-up Area",
+  "site_location": "Wakad"
+}
+```
+
+## Technologies Used
+
+- Flask
+- Scikit-learn
+- Pandas
+- NumPy
+- HTML/CSS/JavaScript
 
 ## Project Structure
 
@@ -65,24 +89,6 @@ A machine learning web application that predicts house prices in Pune based on v
 ├── main.py                    # Flask application entry point
 ├── requirements.txt           # Project dependencies
 └── README.md                  # Project documentation
-```
-
-## API Usage
-
-The application includes a RESTful API endpoint for programmatic predictions:
-
-```
-POST /api/predict
-Content-Type: application/json
-
-{
-  "total_sqft": 1500,
-  "bath": 2,
-  "balcony": 1,
-  "bhk": 3,
-  "area_type": "Super built-up  Area",
-  "site_location": "Wakad"
-}
 ```
 
 ## Future Improvements
