@@ -13,16 +13,23 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 # Load the trained model
+model = None
 try:
     model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "house_price_model.pkl")
+    logger.info(f"Attempting to load model from: {model_path}")
+    
     if os.path.exists(model_path):
-        model = pickle.load(open(model_path, "rb"))
+        logger.info(f"Model file exists, size: {os.path.getsize(model_path)} bytes")
+        with open(model_path, "rb") as model_file:
+            model = pickle.load(model_file)
         logger.info(f"Model loaded successfully from {model_path}")
     else:
         logger.error(f"Model file not found at path: {model_path}")
         model = None
 except Exception as e:
-    logger.error(f"Error loading model: {e}")
+    logger.error(f"Error loading model: {str(e)}")
+    import traceback
+    logger.error(f"Traceback: {traceback.format_exc()}")
     model = None
 
 # Get available locations from the dataset
@@ -144,5 +151,5 @@ def api_predict():
     return jsonify({"success": False, "error": "Request must be JSON"}), 400
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 5001))  # Changed from 5000 to 5001
     app.run(host='0.0.0.0', port=port, debug=False)
