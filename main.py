@@ -14,8 +14,13 @@ logger = logging.getLogger(__name__)
 
 # Load the trained model
 try:
-    model = pickle.load(open("models/house_price_model.pkl", "rb"))
-    logger.info("Model loaded successfully")
+    model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "house_price_model.pkl")
+    if os.path.exists(model_path):
+        model = pickle.load(open(model_path, "rb"))
+        logger.info(f"Model loaded successfully from {model_path}")
+    else:
+        logger.error(f"Model file not found at path: {model_path}")
+        model = None
 except Exception as e:
     logger.error(f"Error loading model: {e}")
     model = None
@@ -23,12 +28,16 @@ except Exception as e:
 # Get available locations from the dataset
 def get_available_locations():
     try:
-        if os.path.exists("data/Pune_House_Data.csv"):
-            df = pd.read_csv("data/Pune_House_Data.csv")
+        data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "Pune_House_Data.csv")
+        if os.path.exists(data_path):
+            df = pd.read_csv(data_path)
             locations = sorted(df['site_location'].dropna().unique().tolist())
             area_types = sorted(df['area_type'].dropna().unique().tolist())
+            logger.info(f"Loaded locations and area types from {data_path}")
             return locations, area_types
-        return [], []
+        else:
+            logger.error(f"Data file not found at path: {data_path}")
+            return [], []
     except Exception as e:
         logger.error(f"Error loading locations: {e}")
         return [], []
@@ -76,6 +85,11 @@ def index():
 
             # Make prediction
             input_df = pd.DataFrame(input_data)
+            if model is None:
+                error_msg = "Model could not be loaded. Please contact support."
+                logger.error("Attempted to make prediction with model=None")
+                return render_template("index.html", error=error_msg, locations=locations, area_types=area_types)
+            
             raw_prediction = model.predict(input_df)[0]
             # Apply inflation multiplier (1.5) to adjust the prediction
             prediction = round(raw_prediction * multiplier, 2)
@@ -114,6 +128,10 @@ def api_predict():
             
             # Adjust for inflation
             input_df = pd.DataFrame(input_data)
+            if model is None:
+                logger.error("API: Attempted to make prediction with model=None")
+                return jsonify({"success": False, "error": "Model could not be loaded. Please contact support."}), 500
+                
             raw_prediction = model.predict(input_df)[0]
             adjusted_prediction = round(raw_prediction * multiplier, 2)
             
