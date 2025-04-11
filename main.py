@@ -137,7 +137,7 @@ def api_predict():
             input_df = pd.DataFrame(input_data)
             if model is None:
                 logger.error("API: Attempted to make prediction with model=None")
-                return jsonify({"success": False, "error": "Model could not be loaded. Please contact support."}), 500
+                return jsonify({"success": False, "error": "Model could not be loaded. Please contact Tanish."}), 500
                 
             raw_prediction = model.predict(input_df)[0]
             adjusted_prediction = round(raw_prediction * multiplier, 2)
